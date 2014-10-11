@@ -15,6 +15,9 @@
 		8411EFE619E501C700679F52 /* MotionCameraTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8411EFE519E501C700679F52 /* MotionCameraTests.m */; };
 		8411EFF019E502F700679F52 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8411EFEF19E502F700679F52 /* AVFoundation.framework */; };
 		8411EFF319E504A400679F52 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8411EFF219E504A400679F52 /* QuartzCore.framework */; };
+		84A60AC419E9AAA900C4EE99 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 84A60AC319E9AAA900C4EE99 /* Camera.m */; };
+		84A60ACA19E9B0C300C4EE99 /* MotionDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = 84A60AC919E9B0C300C4EE99 /* MotionDetector.m */; };
+		84A60ACC19E9B31C00C4EE99 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A60ACB19E9B31C00C4EE99 /* CoreMotion.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +45,11 @@
 		8411EFE519E501C700679F52 /* MotionCameraTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MotionCameraTests.m; sourceTree = "<group>"; };
 		8411EFEF19E502F700679F52 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8411EFF219E504A400679F52 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		84A60AC219E9AAA900C4EE99 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		84A60AC319E9AAA900C4EE99 /* Camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Camera.m; sourceTree = "<group>"; };
+		84A60AC819E9B0C300C4EE99 /* MotionDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionDetector.h; sourceTree = "<group>"; };
+		84A60AC919E9B0C300C4EE99 /* MotionDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MotionDetector.m; sourceTree = "<group>"; };
+		84A60ACB19E9B31C00C4EE99 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84A60ACC19E9B31C00C4EE99 /* CoreMotion.framework in Frameworks */,
 				8411EFF319E504A400679F52 /* QuartzCore.framework in Frameworks */,
 				8411EFF019E502F700679F52 /* AVFoundation.framework in Frameworks */,
 			);
@@ -90,6 +99,10 @@
 				8411EFCE19E501C700679F52 /* AppDelegate.m */,
 				8411EFD019E501C700679F52 /* ViewController.h */,
 				8411EFD119E501C700679F52 /* ViewController.m */,
+				84A60AC219E9AAA900C4EE99 /* Camera.h */,
+				84A60AC319E9AAA900C4EE99 /* Camera.m */,
+				84A60AC819E9B0C300C4EE99 /* MotionDetector.h */,
+				84A60AC919E9B0C300C4EE99 /* MotionDetector.m */,
 				8411EFD319E501C700679F52 /* Main.storyboard */,
 				8411EFD619E501C700679F52 /* Images.xcassets */,
 				8411EFC919E501C700679F52 /* Supporting Files */,
@@ -126,6 +139,7 @@
 		8411EFF119E5045400679F52 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				84A60ACB19E9B31C00C4EE99 /* CoreMotion.framework */,
 				8411EFF219E504A400679F52 /* QuartzCore.framework */,
 				8411EFEF19E502F700679F52 /* AVFoundation.framework */,
 			);
@@ -231,6 +245,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84A60ACA19E9B0C300C4EE99 /* MotionDetector.m in Sources */,
+				84A60AC419E9AAA900C4EE99 /* Camera.m in Sources */,
 				8411EFD219E501C700679F52 /* ViewController.m in Sources */,
 				8411EFCF19E501C700679F52 /* AppDelegate.m in Sources */,
 				8411EFCC19E501C700679F52 /* main.m in Sources */,

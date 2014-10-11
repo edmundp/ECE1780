@@ -9,13 +9,16 @@
 #import "ViewController.h"
 
 #import <AVFoundation/AVFoundation.h>
+#import "Camera.h"
+#import "MotionDetector.h"
 
-@interface ViewController () {
-    AVCaptureSession *captureSession;
-    AVCaptureDevice *inputCamera;
-    AVCaptureDeviceInput *videoInput;
-    
+@interface ViewController () <MotionDetectorDelegate> {
     AVCaptureVideoPreviewLayer *previewLayer;
+    Camera *camera;
+    MotionDetector *motionDetector;
+    
+    UITapGestureRecognizer *tapGestureRecognizer;
+    UILongPressGestureRecognizer *longPressGestureRecognizer;
 }
 
 @end
@@ -29,13 +32,15 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     [self setupCamera];
+    [self setupMotionGestures];
+    [self setupTouchGestures];
     [self setupView];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self startCamera];
+    [camera startCamera];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -43,58 +48,59 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Camera Setup
+#pragma mark - Setup
 
 - (void)setupCamera {
-    // Setup capture session
-    captureSession = [[AVCaptureSession alloc] init];
+    camera = [[Camera alloc] init];
+}
+
+- (void)setupMotionGestures {
+    motionDetector = [[MotionDetector alloc] init];
+    motionDetector.delegate = self;
+}
+
+- (void)setupTouchGestures {
+    tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesturePerformed:)];
+    longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGesturePerformed:)];
     
-    // Find the camera
-    inputCamera = nil;
-    
-    AVCaptureDevicePosition cameraPosition = AVCaptureDevicePositionBack;
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for (AVCaptureDevice *device in devices)
-    {
-        if ([device position] == cameraPosition)
-        {
-            inputCamera = device;
-        }
-    }
-    
-    assert(inputCamera);
-    
-    // Setup input
-    NSError *error = nil;
-    videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:inputCamera error:&error];
-    if ([captureSession canAddInput:videoInput])
-    {
-        [captureSession addInput:videoInput];
-    }
-    
-    // Configure the capture session
-    [captureSession beginConfiguration];
-    
-    [captureSession setSessionPreset:AVCaptureSessionPresetHigh];
-    
-    [captureSession commitConfiguration];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+    [self.view addGestureRecognizer:longPressGestureRecognizer];
 }
 
 - (void)setupView {
-    previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:captureSession];
+    previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:camera.captureSession];
     previewLayer.frame = self.view.layer.bounds;
     previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.view.layer addSublayer:previewLayer];
 }
 
-#pragma mark - Camera Controls
+#pragma mark - MotionDetectorDelegate
 
-- (void)startCamera {
-    [captureSession startRunning];
+- (void)motionDetectorUserPerformedShake {
+    [camera capturePhoto];
 }
 
-- (void)stopCamera {
-    [captureSession stopRunning];
+- (void)motionDetectorUserPerformedVerticalTilt {
+    [camera flipCamera];
+}
+
+- (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
+    [camera setZoom:amount];
+}
+
+#pragma mark - Touch Gestures
+
+- (void)tapGesturePerformed:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        [motionDetector beginMotionSensing];
+    }
+    else if (gesture.state == UIGestureRecognizerStateEnded) {
+        [motionDetector stopMotionSensing];
+    }
+}
+
+- (void)longPressGesturePerformed:(UILongPressGestureRecognizer *)gesture {
+    
 }
 
 @end
