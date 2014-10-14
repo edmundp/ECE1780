@@ -37,11 +37,11 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
     
     // Setup accelerometer
     motionManager.accelerometerUpdateInterval = kAccelerometerUpdateInterval;
-    [motionManager startAccelerometerUpdates];
+    //[motionManager startAccelerometerUpdates];
     
     // Setup gyroscope
     motionManager.gyroUpdateInterval = kGyroscopeUpdateInterval;
-    [motionManager startGyroUpdates];
+    //[motionManager startGyroUpdates];
     
     // TODO: setup detection
 }
@@ -56,18 +56,18 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                                             withHandler:^(CMGyroData *gyroData, NSError *error)
              {
                  float x = gyroData.rotationRate.x;
-                 //NSLog(@"X: %@", x);
+                 //NSLog(@"X: %f", x);
                  float y = gyroData.rotationRate.y;
-                 //NSLog(@"Y: %@", y);
+                 //NSLog(@"Y: %f", y);
                  float z = gyroData.rotationRate.z;
-                 //NSLog(@"Z: %@", z);
+                 //NSLog(@"Z: %f", z);
                  if((x>=0.7) && abs(y)< 0.1 && abs(z)<0.1){
                      [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/15];
-                     [motionManager stopGyroUpdates];
+                     //[motionManager stopGyroUpdates];
                  }
                  if((x<=-0.7) && abs(y)< 0.1 && abs(z)<0.1){
                      [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/15];
-                     [motionManager stopGyroUpdates];
+                     //[motionManager stopGyroUpdates];
                  }
              }];
         }
@@ -79,5 +79,6 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 }
 
 - (void)stopMotionSensing {
+    [motionManager stopGyroUpdates];
 }
 @end

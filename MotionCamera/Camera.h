@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <UIKit/UIKit.h>
 
 @interface Camera : NSObject
 
@@ -32,12 +33,14 @@
  Adjusts the zoom level of the camera
  @param zoom A value between 0.0 (no zoom) and 1.0 (maximum zoom)
  */
-- (void)setZoom:(float)zoom;
+@property (nonatomic) float zoom;
 
 /**
  Captures a photo and saves it to the user's photo album
+ @param handler Called after capture
+ @param delay Time in seconds to wait before capturing
  */
-- (void)capturePhoto;
+- (void)capturePhotoWithCompletionHandler:(void (^)())handler afterDelay:(NSTimeInterval)delay;
 
 /**
  Starts recording video

@@ -14,6 +14,7 @@
 @interface Camera() {
     AVCaptureDevice *_inputCamera;
     AVCaptureDeviceInput *_videoInput;
+    AVCaptureStillImageOutput *_stillImageOutput;
 }
 
 @end
@@ -33,6 +34,10 @@
     // Setup capture session
     _captureSession = [[AVCaptureSession alloc] init];
     
+    // Configure the capture session
+    [_captureSession beginConfiguration];
+    
+    
     // Find the camera
     _inputCamera = [self findCaptureDeviceForPosition:AVCaptureDevicePositionBack];
     assert(_inputCamera);
@@ -46,10 +51,13 @@
     
     [_captureSession addInput:_videoInput];
     
-    // Configure the capture session
-    [_captureSession beginConfiguration];
+    // Setup output
+    _stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+    [_captureSession addOutput:_stillImageOutput];
     
+    // Set quality
     [_captureSession setSessionPreset:AVCaptureSessionPresetHigh];
+    
     
     [_captureSession commitConfiguration];
 }
@@ -85,6 +93,7 @@
     
     [_captureSession beginConfiguration];
     
+    
     // Remove the current input
     [_captureSession removeInput:_videoInput];
     
@@ -100,7 +109,8 @@
     assert([_captureSession canAddInput:_videoInput]);
     
     [_captureSession addInput:_videoInput];
-
+    
+    
     [_captureSession commitConfiguration];
 }
 
@@ -108,19 +118,55 @@
     assert(zoom >= 0.0);
     assert(zoom <= 1.0);
     
+    _zoom = zoom;
+    
     AVCaptureDeviceFormat *format = _inputCamera.activeFormat;
     
     NSError *error = nil;
     [_inputCamera lockForConfiguration:&error];
     assert(!error);
     
+    if (format.videoMaxZoomFactor == 1.0) {
+        NSLog(@"Warning: camera zooming not supported by this device (videoMaxZoomFactor == 1)");
+    }
+    
     _inputCamera.videoZoomFactor = 1.0 + zoom * (format.videoMaxZoomFactor - 1.0);
     
     [_inputCamera unlockForConfiguration];
 }
 
-- (void)capturePhoto {
-    // TODO
+- (void)capturePhotoWithCompletionHandler:(void (^)())handler afterDelay:(NSTimeInterval)delay {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        // Find the video connection
+        AVCaptureConnection *videoConnection = nil;
+        for (AVCaptureConnection *connection in _stillImageOutput.connections) {
+            for (AVCaptureInputPort *port in [connection inputPorts]) {
+                if ([[port mediaType] isEqual:AVMediaTypeVideo] ) {
+                    videoConnection = connection;
+                    break;
+                }
+            }
+            
+            if (videoConnection) { break; }
+        }
+        
+        assert(videoConnection);
+        
+        if (handler) {
+            handler();
+        }
+        
+        [_stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
+            
+            NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+            UIImage *image = [[UIImage alloc] initWithData:imageData];
+            
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+            
+
+        }];
+    });
 }
 
 - (void)startVideoRecording {
