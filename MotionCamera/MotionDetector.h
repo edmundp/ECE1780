@@ -19,6 +19,7 @@
 
 @property (nonatomic, weak) id <MotionDetectorDelegate> delegate;
 @property BOOL tiltPerformed;
+@property BOOL photoCaptured;
 /**
  Start monitoring for motion gestures
  */

@@ -126,6 +126,7 @@
         [self animatePhotoCapture];
         
     } afterDelay:1.0];
+    motionDetector.photoCaptured = YES;
 }
 
 - (void)motionDetectorUserPerformedVerticalTilt {

@@ -23,6 +23,7 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 
 @implementation MotionDetector
 @synthesize tiltPerformed;
+@synthesize photoCaptured;
 - (instancetype)init
 {
     self = [super init];
@@ -37,7 +38,7 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
     
     // Setup accelerometer
     motionManager.accelerometerUpdateInterval = kAccelerometerUpdateInterval;
-    //[motionManager startAccelerometerUpdates];
+    [motionManager startAccelerometerUpdates];
     
     // Setup gyroscope
     motionManager.gyroUpdateInterval = kGyroscopeUpdateInterval;
@@ -49,6 +50,7 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 
 - (void)beginMotionSensing {
     tiltPerformed = NO;
+    photoCaptured = NO;
     if( UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)){
     if([motionManager isGyroAvailable])
     {
@@ -96,11 +98,23 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                  }
              }];
         }
+        
     }
     else
     {
         NSLog(@"Gyroscope not Available!");
-    }
+    }/*
+        if([motionManager isAccelerometerActive]){
+            CMAccelerometerData *data = [motionManager accelerometerData];
+            NSLog(@"X: %f,Y: %f,Z: %f", data.acceleration.x, data.acceleration.y,data.acceleration.z);
+            if(data.acceleration.x >20 || data.acceleration.y>20 || data.acceleration.z>20){
+                [self.delegate motionDetectorUserPerformedShake];
+            }
+        }
+        else{
+            NSLog(@"Accelerometer not available!");
+        }*/
+
     }
     else{
         if([motionManager isGyroAvailable])
@@ -150,12 +164,39 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                  }];
             }
         }
-        else
+                else
         {
             NSLog(@"Gyroscope not Available!");
         }
+        /*
+        if([motionManager isAccelerometerActive]){
+            CMAccelerometerData *data = [motionManager accelerometerData];
+            NSLog(@"X: %f,Y: %f,Z: %f", data.acceleration.x, data.acceleration.y,data.acceleration.z);
+            if(data.acceleration.x >20 || data.acceleration.y>20 || data.acceleration.z>20){
+                [self.delegate motionDetectorUserPerformedShake];
+            }
+        }
+        else{
+            NSLog(@"Accelerometer not available!");
+        }*/
+
 
     }
+    if([motionManager isAccelerometerActive]){
+        [motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue]
+                                   withHandler:^(CMAccelerometerData *data, NSError *error)
+         {
+
+        NSLog(@"X: %f,Y: %f,Z: %f", data.acceleration.x, data.acceleration.y,data.acceleration.z);
+        if(!(photoCaptured) && (data.acceleration.x >0.8 || data.acceleration.y>0.8 || data.acceleration.z>0.8)){
+            [self.delegate motionDetectorUserPerformedShake];
+        }
+         }];
+         }
+    else{
+        NSLog(@"Accelerometer not available!");
+    }
+
 }
 
 - (void)stopMotionSensing {
