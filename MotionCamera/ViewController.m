@@ -57,6 +57,8 @@
 - (void)setupMotionGestures {
     motionDetector = [[MotionDetector alloc] init];
     motionDetector.delegate = self;
+    [motionDetector beginMotionSensing];
+
 }
 
 - (void)setupTouchGestures {
@@ -72,6 +74,7 @@
     previewLayer.frame = self.view.layer.bounds;
     previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.view.layer addSublayer:previewLayer];
+
 }
 
 #pragma mark - MotionDetectorDelegate
@@ -85,6 +88,7 @@
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
+    NSLog(@"ZOOM:%f", amount);
     [camera setZoom:amount];
 }
 

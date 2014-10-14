@@ -47,11 +47,37 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 }
 
 - (void)beginMotionSensing {
-    // TODO
+    if([motionManager isGyroAvailable])
+    {
+        /* Start the gyroscope if it is not active already */
+        if([motionManager isGyroActive] == NO)
+        {
+            [motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
+                                            withHandler:^(CMGyroData *gyroData, NSError *error)
+             {
+                 float x = gyroData.rotationRate.x;
+                 //NSLog(@"X: %@", x);
+                 float y = gyroData.rotationRate.y;
+                 //NSLog(@"Y: %@", y);
+                 float z = gyroData.rotationRate.z;
+                 //NSLog(@"Z: %@", z);
+                 if((x>=0.7) && abs(y)< 0.1 && abs(z)<0.1){
+                     [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/15];
+                     [motionManager stopGyroUpdates];
+                 }
+                 if((x<=-0.7) && abs(y)< 0.1 && abs(z)<0.1){
+                     [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/15];
+                     [motionManager stopGyroUpdates];
+                 }
+             }];
+        }
+    }
+    else
+    {
+        NSLog(@"Gyroscope not Available!");
+    }
 }
 
 - (void)stopMotionSensing {
-    // TODO
 }
-
 @end
