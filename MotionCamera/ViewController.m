@@ -130,10 +130,11 @@
 
 - (void)motionDetectorUserPerformedVerticalTilt {
     [camera flipCamera];
+    motionDetector.tiltPerformed = YES;
+    [motionDetector stopMotionSensing];
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
-    NSLog(@"ZOOM:%f", amount);
     
     float newZoom = MIN(MAX(camera.zoom + amount, 0.0), 1.0);
     
