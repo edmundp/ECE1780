@@ -48,6 +48,32 @@
     [camera startCamera];
 }
 
+- (void)viewDidLayoutSubviews {
+    previewLayer.frame = self.view.layer.bounds;
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    AVCaptureConnection *connection = previewLayer.connection;
+    
+    AVCaptureVideoOrientation videoOrientation = AVCaptureVideoOrientationPortrait;
+    
+    switch (self.interfaceOrientation) {
+        case UIInterfaceOrientationPortrait: videoOrientation = AVCaptureVideoOrientationPortrait; break;
+        case UIInterfaceOrientationPortraitUpsideDown: videoOrientation = AVCaptureVideoOrientationPortraitUpsideDown; break;
+        case UIInterfaceOrientationLandscapeLeft: videoOrientation = AVCaptureVideoOrientationLandscapeLeft; break;
+        case UIInterfaceOrientationLandscapeRight: videoOrientation = AVCaptureVideoOrientationLandscapeRight; break;
+        default:
+            break;
+    }
+    
+    if ([connection isVideoOrientationSupported]) {
+        [connection setVideoOrientation:videoOrientation];
+    }
+    else {
+        NSLog(@"Warning: device doesn't support video orientation");
+    }
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
