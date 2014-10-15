@@ -90,6 +90,11 @@
     // Get new position
     AVCaptureDevicePosition newPosition = (_inputCamera.position == AVCaptureDevicePositionBack) ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
     
+    self.cameraPosition = newPosition;
+}
+
+- (void)setCameraPosition:(AVCaptureDevicePosition)cameraPosition {
+    _cameraPosition = cameraPosition;
     
     [_captureSession beginConfiguration];
     
@@ -98,7 +103,7 @@
     [_captureSession removeInput:_videoInput];
     
     // Find camera
-    _inputCamera = [self findCaptureDeviceForPosition:newPosition];
+    _inputCamera = [self findCaptureDeviceForPosition:cameraPosition];
     assert(_inputCamera);
     
     // Add new input

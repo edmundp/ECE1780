@@ -30,6 +30,11 @@
 - (void)flipCamera;
 
 /**
+ The current position (front or back)
+ */
+@property (nonatomic) AVCaptureDevicePosition cameraPosition;
+
+/**
  Adjusts the zoom level of the camera
  @param zoom A value between 0.0 (no zoom) and 1.0 (maximum zoom)
  */

@@ -153,12 +153,20 @@
         
     } afterDelay:1.0];
     motionDetector.photoCaptured = YES;
+    
+    [self showMessage:@"Capturing in 1s..." forDuration:1.0];
 }
 
 - (void)motionDetectorUserPerformedVerticalTilt {
     [camera flipCamera];
     motionDetector.tiltPerformed = YES;
     [motionDetector stopMotionSensing];
+    
+    
+    NSString *type = camera.cameraPosition == AVCaptureDevicePositionBack ? @"back" : @"front";
+    NSString *message = [NSString stringWithFormat:@"Switched to %@ camera", type];
+    
+    [self showMessage:message forDuration:2.0];
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
