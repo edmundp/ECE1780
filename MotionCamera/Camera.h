@@ -35,6 +35,11 @@
 @property (nonatomic) AVCaptureDevicePosition cameraPosition;
 
 /**
+ The device's orientation
+ */
+@property (nonatomic) AVCaptureVideoOrientation orientation;
+
+/**
  Adjusts the zoom level of the camera
  @param zoom A value between 0.0 (no zoom) and 1.0 (maximum zoom)
  */

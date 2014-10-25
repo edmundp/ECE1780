@@ -7,14 +7,18 @@
 //
 
 #import "Camera.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 // Reference: https://developer.apple.com/library/ios/documentation/AVFoundation/Reference/AVCaptureDevice_Class/index.html
 // Reference: https://developer.apple.com/library/ios/documentation/AVFoundation/Reference/AVFoundationFramework/index.html#//apple_ref/doc/uid/TP40008072
 
-@interface Camera() {
+@interface Camera() <AVCaptureFileOutputRecordingDelegate> {
     AVCaptureDevice *_inputCamera;
+    AVCaptureDevice *_inputAudioCapture;
     AVCaptureDeviceInput *_videoInput;
+    
     AVCaptureStillImageOutput *_stillImageOutput;
+    AVCaptureMovieFileOutput *_movieFilOutput;
 }
 
 @end
@@ -42,7 +46,7 @@
     _inputCamera = [self findCaptureDeviceForPosition:AVCaptureDevicePositionBack];
     assert(_inputCamera);
     
-    // Setup input
+    // Setup video input
     NSError *error = nil;
     _videoInput = [[AVCaptureDeviceInput alloc] initWithDevice:_inputCamera error:&error];
     
@@ -51,9 +55,36 @@
     
     [_captureSession addInput:_videoInput];
     
-    // Setup output
+    // Setup audio input
+    _inputAudioCapture = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+    AVCaptureDeviceInput *audioInput = [AVCaptureDeviceInput deviceInputWithDevice:_inputAudioCapture error:&error];
+    
+    assert(!error);
+    assert([_captureSession canAddInput:audioInput]);
+    
+    [_captureSession addInput:audioInput];
+    
+    
+    // Setup still image output
     _stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+    
+    assert([_captureSession canAddOutput:_stillImageOutput]);
     [_captureSession addOutput:_stillImageOutput];
+    
+    
+    // Setup video output
+    _movieFilOutput = [[AVCaptureMovieFileOutput alloc] init];
+
+    Float64 totalSeconds = 60;
+    int32_t preferredTimeScale = 30;
+    CMTime maxDuration = CMTimeMakeWithSeconds(totalSeconds, preferredTimeScale);
+    
+    _movieFilOutput.maxRecordedDuration = maxDuration;
+    _movieFilOutput.minFreeDiskSpaceLimit = 1024 * 1024;
+    
+    assert([_captureSession canAddOutput:_movieFilOutput]);
+    [_captureSession addOutput:_movieFilOutput];
+    
     
     // Set quality
     [_captureSession setSessionPreset:AVCaptureSessionPresetHigh];
@@ -135,9 +166,26 @@
         NSLog(@"Warning: camera zooming not supported by this device (videoMaxZoomFactor == 1)");
     }
     
-    _inputCamera.videoZoomFactor = 1.0 + zoom * (format.videoMaxZoomFactor - 1.0);
+    // The maximum zoom is quite high, so we choose the maximum to be something lower
+    CGFloat scalingFactor = 0.1;
+    
+    _inputCamera.videoZoomFactor = 1.0 + scalingFactor * zoom * (format.videoMaxZoomFactor - 1.0);
     
     [_inputCamera unlockForConfiguration];
+}
+
+- (void)setOrientation:(AVCaptureVideoOrientation)orientation {
+    _orientation = orientation;
+    
+    AVCaptureConnection *connection = nil;
+    
+    connection = [_stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
+    assert([connection isVideoOrientationSupported]);
+    [connection setVideoOrientation:orientation];
+    
+    connection = [_movieFilOutput connectionWithMediaType:AVMediaTypeVideo];
+    assert([connection isVideoOrientationSupported]);
+    [connection setVideoOrientation:orientation];
 }
 
 - (void)capturePhotoWithCompletionHandler:(void (^)())handler afterDelay:(NSTimeInterval)delay {
@@ -175,11 +223,52 @@
 }
 
 - (void)startVideoRecording {
-    // TODO
+    if (_movieFilOutput.isRecording) {
+        NSLog(@"Already recording!");
+        return;
+    }
+    
+   	// Create temporary URL to record to
+    NSString *outputPath = [[NSString alloc] initWithFormat:@"%@%@", NSTemporaryDirectory(), @"output.mov"];
+    NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:outputPath];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    if ([fileManager fileExistsAtPath:outputPath]) {
+        BOOL success = [fileManager removeItemAtPath:outputPath error:nil];
+        assert(success);
+    }
+    
+    // Start recording
+    [_movieFilOutput startRecordingToOutputFileURL:outputURL recordingDelegate:self];
 }
 
 - (void)stopVideoRecording {
-    // TODO
+    if (!_movieFilOutput.isRecording) {
+        NSLog(@"Already stopped recording!");
+        return;
+    }
+    
+    [_movieFilOutput stopRecording];
+}
+
+#pragma mark - AVCaptureFileOutputRecordingDelegate
+
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
+didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
+      fromConnections:(NSArray *)connections
+                error:(NSError *)error
+{
+    assert(!error);
+    
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    
+    assert([library videoAtPathIsCompatibleWithSavedPhotosAlbum:outputFileURL]);
+    [library writeVideoAtPathToSavedPhotosAlbum:outputFileURL
+                                completionBlock:^(NSURL *assetURL, NSError *error) {
+                                    assert(!error);
+                                    NSLog(@"Saved video");
+                                }];
+
 }
 
 @end

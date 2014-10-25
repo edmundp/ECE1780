@@ -66,12 +66,10 @@
             break;
     }
     
-    if ([connection isVideoOrientationSupported]) {
-        [connection setVideoOrientation:videoOrientation];
-    }
-    else {
-        NSLog(@"Warning: device doesn't support video orientation");
-    }
+    assert([connection isVideoOrientationSupported]);
+    [connection setVideoOrientation:videoOrientation];
+    
+    camera.orientation = videoOrientation;
 }
 
 - (void)didReceiveMemoryWarning {

@@ -15,6 +15,7 @@
 		8411EFE619E501C700679F52 /* MotionCameraTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8411EFE519E501C700679F52 /* MotionCameraTests.m */; };
 		8411EFF019E502F700679F52 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8411EFEF19E502F700679F52 /* AVFoundation.framework */; };
 		8411EFF319E504A400679F52 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8411EFF219E504A400679F52 /* QuartzCore.framework */; };
+		846D7A6419FB3F1400F34305 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846D7A6319FB3F1400F34305 /* AssetsLibrary.framework */; };
 		8471E6C219ECCBB3000AA70B /* TouchDownGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8471E6C119ECCBB3000AA70B /* TouchDownGestureRecognizer.m */; };
 		8481729819EE1E110049B62D /* FixedWidthLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8481729719EE1E110049B62D /* FixedWidthLabel.m */; };
 		84A60AC419E9AAA900C4EE99 /* Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 84A60AC319E9AAA900C4EE99 /* Camera.m */; };
@@ -47,6 +48,7 @@
 		8411EFE519E501C700679F52 /* MotionCameraTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MotionCameraTests.m; sourceTree = "<group>"; };
 		8411EFEF19E502F700679F52 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8411EFF219E504A400679F52 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		846D7A6319FB3F1400F34305 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8471E6C019ECCBB3000AA70B /* TouchDownGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchDownGestureRecognizer.h; sourceTree = "<group>"; };
 		8471E6C119ECCBB3000AA70B /* TouchDownGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TouchDownGestureRecognizer.m; sourceTree = "<group>"; };
 		8481729619EE1E110049B62D /* FixedWidthLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedWidthLabel.h; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				846D7A6419FB3F1400F34305 /* AssetsLibrary.framework in Frameworks */,
 				84A60ACC19E9B31C00C4EE99 /* CoreMotion.framework in Frameworks */,
 				8411EFF319E504A400679F52 /* QuartzCore.framework in Frameworks */,
 				8411EFF019E502F700679F52 /* AVFoundation.framework in Frameworks */,
@@ -149,6 +152,7 @@
 		8411EFF119E5045400679F52 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				846D7A6319FB3F1400F34305 /* AssetsLibrary.framework */,
 				84A60ACB19E9B31C00C4EE99 /* CoreMotion.framework */,
 				8411EFF219E504A400679F52 /* QuartzCore.framework */,
 				8411EFEF19E502F700679F52 /* AVFoundation.framework */,

@@ -201,5 +201,6 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 
 - (void)stopMotionSensing {
     [motionManager stopGyroUpdates];
+    [motionManager stopDeviceMotionUpdates];
 }
 @end
