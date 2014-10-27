@@ -10,8 +10,10 @@
 #import <Foundation/Foundation.h>
 
 @protocol MotionDetectorDelegate <NSObject>
-- (void)motionDetectorUserPerformedShake;
+- (void)motionDetectorUserPerformedShake:(int)xx;
+- (void)motionDetectorUserPerformedPush;
 - (void)motionDetectorUserPerformedVerticalTilt;
+- (void)motionDetectorUserPerformedHorizontalTilt;
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount;
 @end
 
@@ -20,6 +22,13 @@
 @property (nonatomic, weak) id <MotionDetectorDelegate> delegate;
 @property BOOL tiltPerformed;
 @property BOOL photoCaptured;
+
+@property NSInteger shakeCount;
+@property NSDate* lastShake;
+@property float shakeDirectionX;
+@property float shakeDirectionZ;
+@property BOOL tiltInitialCheckForwardBackward;
+@property BOOL tiltInitialCheckLeftwardRightward;
 /**
  Start monitoring for motion gestures
  */

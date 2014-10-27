@@ -17,6 +17,12 @@
     IBOutlet UIView *messageView;
     IBOutlet UILabel *labelMessage;
     
+    NSInteger captureTimeRemaining;
+    NSTimer* captureTimer;
+    
+    BOOL isVideo;
+    BOOL isRecording;
+    
     AVCaptureVideoPreviewLayer *previewLayer;
     Camera *camera;
     MotionDetector *motionDetector;
@@ -122,6 +128,38 @@
     }];
 }
 
+- (void) updateTimeCounter {
+
+    captureTimeRemaining--;
+    if (captureTimeRemaining==0)
+    {
+        if (isRecording)
+        {
+            [self showMessage:@"Recording finished" forDuration:1];
+            [camera stopVideoRecording];
+            isRecording=NO;
+        }
+        else{
+            [self showMessage:@"Cheese!" forDuration:1];
+            motionDetector.photoCaptured = YES;
+            [camera capturePhotoWithCompletionHandler:^{
+            
+                [self animatePhotoCapture];
+            
+            } afterDelay:0.5];
+        }
+        [captureTimer invalidate];
+        captureTimer=nil;
+    }
+    else
+    {
+        messageView.alpha=1.0;
+        NSString *message = isRecording ? [NSString stringWithFormat: @"Finish recording in %ds...", captureTimeRemaining] : [NSString stringWithFormat: @"Capturing in %ds...", captureTimeRemaining];
+        labelMessage.text=message;
+    }
+    
+}
+
 - (void)animatePhotoCapture {
     // Add flash view
     UIView *flashView = [[UIView alloc] init];
@@ -144,27 +182,83 @@
 
 #pragma mark - MotionDetectorDelegate
 
-- (void)motionDetectorUserPerformedShake {
+- (void)motionDetectorUserPerformedPush{
+    if (isRecording)
+    {
+        [self showMessage:@"Recording finished" forDuration:1];
+        [camera stopVideoRecording];
+        isRecording=NO;
+        return;
+    }
+    if (isVideo)
+    {
+        isRecording=YES;
+        [camera startVideoRecording];
+        labelMessage.text=@"Recording...";
+        messageView.alpha=1;
+        return;
+    }
+    [self showMessage:@"Cheese!" forDuration:1];
+    motionDetector.photoCaptured = YES;
     [camera capturePhotoWithCompletionHandler:^{
         
         [self animatePhotoCapture];
         
-    } afterDelay:1.0];
-    motionDetector.photoCaptured = YES;
+    } afterDelay:1];
+}
+
+- (void)motionDetectorUserPerformedShake: (int)shakeCount{
+    if (isRecording)
+        return;
+    if (isVideo)
+    {
+        captureTimeRemaining=shakeCount*5;
+        isRecording=YES;
+        [camera startVideoRecording];
+        captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
+        return;
+    }
+    if (captureTimeRemaining>0)
+    {
+        captureTimeRemaining+=shakeCount*3;
+        return;
+    }
+    captureTimeRemaining=(shakeCount-1)*3;
+    if (captureTimeRemaining==0)
+        captureTimeRemaining++;
     
-    [self showMessage:@"Capturing in 1s..." forDuration:1.0];
+
+    [self showMessage:[NSString stringWithFormat: @"%d shakes detected!", shakeCount] forDuration:1];
+
+
+    captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
 }
 
 - (void)motionDetectorUserPerformedVerticalTilt {
+    if (isRecording)
+        return;
     [camera flipCamera];
     motionDetector.tiltPerformed = YES;
-    [motionDetector stopMotionSensing];
+   // [motionDetector stopMotionSensing];
     
     
     NSString *type = camera.cameraPosition == AVCaptureDevicePositionBack ? @"back" : @"front";
     NSString *message = [NSString stringWithFormat:@"Switched to %@ camera", type];
     
     [self showMessage:message forDuration:2.0];
+}
+
+- (void)motionDetectorUserPerformedHorizontalTilt {
+    if (isRecording || captureTimeRemaining>0)
+        return;
+    motionDetector.tiltPerformed = YES;
+  //  [motionDetector stopMotionSensing];
+    isVideo=!isVideo;
+    NSString *captureMode = isVideo ? @"Video recording mode" : @"Photo capturing mode";
+
+    [self showMessage: captureMode forDuration:2.0];
+    
+
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {

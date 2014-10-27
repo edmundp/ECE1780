@@ -24,6 +24,13 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 @implementation MotionDetector
 @synthesize tiltPerformed;
 @synthesize photoCaptured;
+@synthesize shakeCount;
+@synthesize shakeDirectionX;
+@synthesize shakeDirectionZ;
+@synthesize lastShake;
+@synthesize tiltInitialCheckForwardBackward;
+@synthesize tiltInitialCheckLeftwardRightward;
+
 - (instancetype)init
 {
     self = [super init];
@@ -51,6 +58,13 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 - (void)beginMotionSensing {
     tiltPerformed = NO;
     photoCaptured = NO;
+    shakeCount=0;
+    shakeDirectionX=-1.0;
+    shakeDirectionZ=-1.0;
+    lastShake=[NSDate date];
+    tiltInitialCheckForwardBackward=NO;
+    tiltInitialCheckLeftwardRightward=NO;
+    
     if( UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)){
     if([motionManager isGyroAvailable])
     {
@@ -62,16 +76,28 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                 float x = motion.gravity.x;
                 float y = motion.gravity.y;
                 float z = motion.gravity.z;
+                float accx= motion.userAcceleration.x;
                 float angle = atan2(y, x) + M_PI_2;           // in radians
                 float angleDegrees = angle * 180.0f / M_PI;   // in degrees
                 //NSLog(@"degree: %f", angleDegrees);
                 float r = sqrtf(x*x + y*y + z*z);
                 float tiltForwardBackward = acosf(z/r) * 180.0f / M_PI - 90.0f;
-
-                if(!(tiltPerformed) && (tiltForwardBackward> 70 || tiltForwardBackward<-70)){
+                float tiltLeftwardRightward = acosf(x/r) * 180.0f / M_PI - 90.0f;
+                if (!(tiltInitialCheckForwardBackward) && (tiltForwardBackward< 30) && (tiltForwardBackward>-30))
+                    tiltInitialCheckForwardBackward=YES;
+                    
+                if (!(tiltInitialCheckLeftwardRightward) && (tiltLeftwardRightward< 30 && tiltLeftwardRightward>-30))
+                        tiltInitialCheckLeftwardRightward=YES;
+                if((shakeCount==0) && !(tiltPerformed) && tiltInitialCheckForwardBackward && (tiltForwardBackward> 70 || tiltForwardBackward<-70)){
                     [self.delegate motionDetectorUserPerformedVerticalTilt];
                     [[NSOperationQueue mainQueue]  cancelAllOperations];
-                    [self stopMotionSensing];
+                   // [self stopMotionSensing];
+                }
+                
+                if((shakeCount==0 && fabs(accx)<0.1) && !(tiltPerformed) && tiltInitialCheckLeftwardRightward && (tiltLeftwardRightward> 30 || tiltLeftwardRightward<-30)){
+                    [self.delegate motionDetectorUserPerformedHorizontalTilt];
+                    [[NSOperationQueue mainQueue]  cancelAllOperations];
+                    //[self stopMotionSensing];
                 }
                 
                     }];
@@ -127,16 +153,28 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                      float x = motion.gravity.x;
                      float y = motion.gravity.y;
                      float z = motion.gravity.z;
+                     float accx= motion.userAcceleration.x;
                      float angle = atan2(y, x) + M_PI_2;           // in radians
                      float angleDegrees = angle * 180.0f / M_PI;   // in degrees
                      //NSLog(@"degree: %f", angleDegrees);
                      float r = sqrtf(x*x + y*y + z*z);
                      float tiltForwardBackward = acosf(z/r) * 180.0f / M_PI - 90.0f;
+                     float tiltLeftwardRightward = acosf(x/r) * 180.0f / M_PI - 90.0f;
+                     if (!(tiltInitialCheckForwardBackward) && (tiltForwardBackward< 30 && tiltForwardBackward>-30))
+                         tiltInitialCheckForwardBackward=YES;
                      
-                     if(!(tiltPerformed) && (tiltForwardBackward> 70 || tiltForwardBackward<-70)){
+                     if (!(tiltInitialCheckLeftwardRightward) && (tiltLeftwardRightward< 30 && tiltLeftwardRightward>-30))
+                         tiltInitialCheckLeftwardRightward=YES;
+                     if((shakeCount==0) && !(tiltPerformed) && tiltInitialCheckForwardBackward && (tiltForwardBackward> 70 || tiltForwardBackward<-70)){
                          [self.delegate motionDetectorUserPerformedVerticalTilt];
                          [[NSOperationQueue mainQueue]  cancelAllOperations];
-                         [self stopMotionSensing];
+                      //   [self stopMotionSensing];
+                     }
+                     
+                     if((shakeCount==0 && fabs(accx)<0.1) && !(tiltPerformed) && tiltInitialCheckLeftwardRightward && (tiltLeftwardRightward> 30 || tiltLeftwardRightward<-30)){
+                         [self.delegate motionDetectorUserPerformedHorizontalTilt];
+                         [[NSOperationQueue mainQueue]  cancelAllOperations];
+                        // [self stopMotionSensing];
                      }
                      
                  }];
@@ -182,15 +220,40 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 
 
     }
-    if([motionManager isAccelerometerActive]){
+    
+
+    if([motionManager isAccelerometerAvailable]){
+     //   [motionManager startAccelerometerUpdates];
         [motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue]
                                    withHandler:^(CMAccelerometerData *data, NSError *error)
          {
-
+             NSTimeInterval elapsed=[lastShake timeIntervalSinceNow];
+//             if (!(photoCaptured) && shakeCount==0 && fabs(data.acceleration.z) >1 && shakeDirectionZ * data.acceleration.z <0)
+//                 {
+//                     shakeDirectionZ=data.acceleration.z;
+//                     [self.delegate motionDetectorUserPerformedPush];
+//             }
+             if (!(photoCaptured) && fabs(elapsed)>0.75 && shakeCount>0)
+             {
+                 NSInteger tmp=shakeCount;
+                 shakeCount=0;
+                 shakeDirectionX=-1.0;
+                 [self.delegate motionDetectorUserPerformedShake:tmp];
+                 
+             }
+            // NSLog(@"shakes= %d, elapsed=%f", shakeCount, elapsed);
         NSLog(@"X: %f,Y: %f,Z: %f", data.acceleration.x, data.acceleration.y,data.acceleration.z);
-        if(!(photoCaptured) && (data.acceleration.x >0.8 || data.acceleration.y>0.8 || data.acceleration.z>0.8)){
-            [self.delegate motionDetectorUserPerformedShake];
-        }
+             if(fabs(data.acceleration.x) >1.5 && shakeDirectionX * data.acceleration.x <0)
+                 {
+                     lastShake=[NSDate date];
+                     shakeDirectionX=data.acceleration.x;
+                     if (data.acceleration.x>0)
+                         shakeCount++;
+                     
+                 }
+            
+            //[self.delegate motionDetectorUserPerformedShake:data.acceleration.x:data.acceleration.y:data.acceleration.z];
+        
          }];
          }
     else{
@@ -202,5 +265,6 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 - (void)stopMotionSensing {
     [motionManager stopGyroUpdates];
     [motionManager stopDeviceMotionUpdates];
+    //[motionManager stopAccelerometerUpdates];
 }
 @end
