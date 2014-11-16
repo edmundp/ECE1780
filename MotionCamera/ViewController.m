@@ -144,36 +144,16 @@
     }];
 }
 
-- (void) updateTimeCounter {
-
-    captureTimeRemaining--;
-    if (captureTimeRemaining==0)
-    {
-        if (isRecording)
-        {
-            [self showMessage:@"Recording finished" forDuration:1];
-            [camera stopVideoRecording];
-            isRecording=NO;
-        }
-        else{
-            [self showMessage:@"Cheese!" forDuration:1];
-            motionDetector.photoCaptured = YES;
-            [camera capturePhotoWithCompletionHandler:^{
-            
-                [self animatePhotoCapture];
-            
-            } afterDelay:0.5];
-        }
-        [captureTimer invalidate];
-        captureTimer=nil;
-    }
-    else
-    {
-        messageView.alpha=1.0;
-        NSString *message = isRecording ? [NSString stringWithFormat: @"Finish recording in %ds...", captureTimeRemaining] : [NSString stringWithFormat: @"Capturing in %ds...", captureTimeRemaining];
-        labelMessage.text=message;
-    }
+- (void)timerCountdownFinished {
+    captureTimeRemaining = 0.0;
     
+    [self showMessage:@"Cheese!" forDuration:1];
+    motionDetector.photoCaptured = YES;
+    [camera capturePhotoWithCompletionHandler:^{
+        
+        [self animatePhotoCapture];
+        
+    } afterDelay:0.0];
 }
 
 - (void)animatePhotoCapture {
@@ -245,7 +225,7 @@
         captureTimeRemaining=shakeCount*5;
         isRecording=YES;
         //[camera startVideoRecording];
-        captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
+        //captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
         return;
     }
     
@@ -261,11 +241,11 @@
     
 
     [self showMessage:[NSString stringWithFormat: @"%d shakes detected!", shakeCount] forDuration:1];
-
-
-    captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
     
-    [timerView animateWithDuration:1.0];
+
+    captureTimer = [NSTimer scheduledTimerWithTimeInterval:captureTimeRemaining target:self selector:@selector(timerCountdownFinished) userInfo:nil repeats:NO];
+    
+    [timerView animateWithDuration:captureTimeRemaining];
 }
 
 - (void)motionDetectorUserPerformedVerticalTilt {
