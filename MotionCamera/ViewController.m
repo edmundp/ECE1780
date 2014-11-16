@@ -12,10 +12,15 @@
 #import "Camera.h"
 #import "MotionDetector.h"
 #import "TouchDownGestureRecognizer.h"
+#import "CircleLayer.h"
+#import "TimerView.h"
 
-@interface ViewController () <MotionDetectorDelegate> {
+@interface ViewController () <MotionDetectorDelegate, UIGestureRecognizerDelegate> {
     IBOutlet UIView *messageView;
     IBOutlet UILabel *labelMessage;
+    IBOutlet TimerView *timerView;
+    
+    CircleLayer *circleLayer;
     
     NSInteger captureTimeRemaining;
     NSTimer* captureTimer;
@@ -51,7 +56,9 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+#if !TARGET_IPHONE_SIMULATOR
     [camera startCamera];
+#endif
 }
 
 - (void)viewDidLayoutSubviews {
@@ -86,7 +93,9 @@
 #pragma mark - Setup
 
 - (void)setupCamera {
+#if !TARGET_IPHONE_SIMULATOR
     camera = [[Camera alloc] init];
+#endif
 }
 
 - (void)setupMotionGestures {
@@ -96,8 +105,13 @@
 
 - (void)setupTouchGestures {
     tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesturePerformed:)];
+    tapGestureRecognizer.delegate = self;
+    
     longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGesturePerformed:)];
+    longPressGestureRecognizer.delegate = self;
+    
     touchDownGestureRecognizer = [[TouchDownGestureRecognizer alloc] initWithTarget:self action:@selector(touchDownGesturePerformed:)];
+    touchDownGestureRecognizer.delegate = self;
     
     [self.view addGestureRecognizer:tapGestureRecognizer];
     [self.view addGestureRecognizer:longPressGestureRecognizer];
@@ -180,20 +194,33 @@
     }];
 }
 
+- (void)showTouchAnimationAtPoint:(CGPoint)point {
+    [circleLayer removeFromSuperlayer];
+    circleLayer = [[CircleLayer alloc] initWithCenter:point andRadius:50.0];
+    
+    [circleLayer animateFromRadius:50.0 toRadius:60.0];
+    
+    [self.view.layer addSublayer:circleLayer];
+}
+
+- (void)removeTouchAnimation {
+    [circleLayer fadeOutAndRemove];
+}
+
 #pragma mark - MotionDetectorDelegate
 
 - (void)motionDetectorUserPerformedPush{
     if (isRecording)
     {
         [self showMessage:@"Recording finished" forDuration:1];
-        [camera stopVideoRecording];
+        //[camera stopVideoRecording];
         isRecording=NO;
         return;
     }
     if (isVideo)
     {
         isRecording=YES;
-        [camera startVideoRecording];
+        //[camera startVideoRecording];
         labelMessage.text=@"Recording...";
         messageView.alpha=1;
         return;
@@ -210,19 +237,22 @@
 - (void)motionDetectorUserPerformedShake: (int)shakeCount{
     if (isRecording)
         return;
+    
     if (isVideo)
     {
         captureTimeRemaining=shakeCount*5;
         isRecording=YES;
-        [camera startVideoRecording];
+        //[camera startVideoRecording];
         captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
         return;
     }
+    
     if (captureTimeRemaining>0)
     {
         captureTimeRemaining+=shakeCount*3;
         return;
     }
+    
     captureTimeRemaining=(shakeCount-1)*3;
     if (captureTimeRemaining==0)
         captureTimeRemaining++;
@@ -232,6 +262,8 @@
 
 
     captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
+    
+    [timerView animateWithDuration:1.0];
 }
 
 - (void)motionDetectorUserPerformedVerticalTilt {
@@ -270,10 +302,17 @@
     [self showMessage:[NSString stringWithFormat:@"Zoom: %d%%", (int)(newZoom * 100)] forDuration:2.0];
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    CGPoint location = [touch locationInView:self.view];
+    return location.x > 30;
+}
+
 #pragma mark - Touch Gestures
 
 - (void)tapGesturePerformed:(UITapGestureRecognizer *)gesture {
-
+    
 }
 
 - (void)longPressGesturePerformed:(UILongPressGestureRecognizer *)gesture {
@@ -281,11 +320,18 @@
 }
 
 - (void)touchDownGesturePerformed:(TouchDownGestureRecognizer *)gesture {
+    CGPoint point = [gesture locationInView:self.view];
+    
     if (gesture.state == UIGestureRecognizerStateBegan) {
         [motionDetector beginMotionSensing];
+        [self showTouchAnimationAtPoint:point];
+    }
+    else if (gesture.state == UIGestureRecognizerStateChanged) {
+        circleLayer.position = point;
     }
     else if (gesture.state == UIGestureRecognizerStateEnded) {
         [motionDetector stopMotionSensing];
+        [self removeTouchAnimation];
     }
 }
 

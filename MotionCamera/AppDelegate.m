@@ -43,41 +43,5 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
--(void)updateOrientation {
-    UIInterfaceOrientation iOrientation = [UIApplication sharedApplication].statusBarOrientation;
-	UIDeviceOrientation dOrientation = [UIDevice currentDevice].orientation;
-    
-	bool landscape;
-	
-	if (dOrientation == UIDeviceOrientationUnknown || dOrientation == UIDeviceOrientationFaceUp || dOrientation == UIDeviceOrientationFaceDown) {
-		// If the device is laying down, use the UIInterfaceOrientation based on the status bar.
-		landscape = UIInterfaceOrientationIsLandscape(iOrientation);
-	} else {
-		// If the device is not laying down, use UIDeviceOrientation.
-		landscape = UIDeviceOrientationIsLandscape(dOrientation);
-		
-		// There's a bug in iOS!!!! http://openradar.appspot.com/7216046
-		// So values needs to be reversed for landscape!
-		if (dOrientation == UIDeviceOrientationLandscapeLeft) iOrientation = UIInterfaceOrientationLandscapeRight;
-		else if (dOrientation == UIDeviceOrientationLandscapeRight) iOrientation = UIInterfaceOrientationLandscapeLeft;
-        
-		else if (dOrientation == UIDeviceOrientationPortrait) iOrientation = UIInterfaceOrientationPortrait;
-		else if (dOrientation == UIDeviceOrientationPortraitUpsideDown) iOrientation = UIInterfaceOrientationPortraitUpsideDown;
-	}
-	
-	if (landscape) {
-        
-
-	} else {
-        
-	}
-	
-	// Now manually rotate the view if needed.
-
-    
-	// Set the status bar to the right spot just in case
-	[[UIApplication sharedApplication] setStatusBarOrientation:iOrientation];
-	
-}
 
 @end

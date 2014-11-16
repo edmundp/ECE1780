@@ -73,17 +73,17 @@
     
     
     // Setup video output
-    _movieFilOutput = [[AVCaptureMovieFileOutput alloc] init];
-
-    Float64 totalSeconds = 60;
-    int32_t preferredTimeScale = 30;
-    CMTime maxDuration = CMTimeMakeWithSeconds(totalSeconds, preferredTimeScale);
-    
-    _movieFilOutput.maxRecordedDuration = maxDuration;
-    _movieFilOutput.minFreeDiskSpaceLimit = 1024 * 1024;
-    
-    assert([_captureSession canAddOutput:_movieFilOutput]);
-    [_captureSession addOutput:_movieFilOutput];
+//    _movieFilOutput = [[AVCaptureMovieFileOutput alloc] init];
+//
+//    Float64 totalSeconds = 60;
+//    int32_t preferredTimeScale = 30;
+//    CMTime maxDuration = CMTimeMakeWithSeconds(totalSeconds, preferredTimeScale);
+//    
+//    _movieFilOutput.maxRecordedDuration = maxDuration;
+//    _movieFilOutput.minFreeDiskSpaceLimit = 1024 * 1024;
+//    
+//    assert([_captureSession canAddOutput:_movieFilOutput]);
+//    [_captureSession addOutput:_movieFilOutput];
     
     
     // Set quality
