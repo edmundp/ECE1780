@@ -9,7 +9,6 @@
 #import "HelpViewController.h"
 
 @interface HelpViewController () {
-    
     IBOutlet UIView *circleOneView;
     IBOutlet UILabel *labelOne;
     
@@ -21,6 +20,12 @@
     
     IBOutlet UIImageView *imageViewShake;
     IBOutlet UILabel *labelShake;
+    
+    IBOutlet UIImageView *imageViewSwitch;
+    IBOutlet UILabel *labelSwitch;
+    
+    IBOutlet UIImageView *imageViewTilt;
+    IBOutlet UILabel *labelTilt;
 }
 
 @end
@@ -29,17 +34,30 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
-    imageViewZoom.animationImages = @[[UIImage imageNamed:@"deviceCenter"],
-                                      [UIImage imageNamed:@"deviceLeft"],
-                                      [UIImage imageNamed:@"deviceCenter"],
-                                      [UIImage imageNamed:@"deviceRight"]];
-    imageViewZoom.animationDuration = 2.0;
-    [imageViewZoom startAnimating];
+    CAKeyframeAnimation *animation = nil;
+    
+    animation = [CAKeyframeAnimation animationWithKeyPath:@"transform.rotation.z"];
+    animation.duration = 2.0f;
+    animation.cumulative = NO;
+    animation.repeatCount = HUGE_VALF;
+    animation.values = @[@(0.0 * M_PI),
+                         @(-0.2 * M_PI),
+                         @(0.0 * M_PI),
+                         @(0.2 * M_PI),
+                         @(0.0 * M_PI)];
+    animation.keyTimes = @[@(0.00),
+                           @(0.20),
+                           @(0.40),
+                           @(0.60),
+                           @(0.80)];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeForwards;
+    
+    [imageViewZoom.layer addAnimation:animation forKey:nil];
     
     
-    CAKeyframeAnimation *animation;
     animation = [CAKeyframeAnimation animationWithKeyPath:@"transform.rotation.z"];
     animation.duration = 1.0f;
     animation.cumulative = NO;
@@ -59,6 +77,22 @@
     animation.fillMode = kCAFillModeForwards;
     
     [imageViewShake.layer addAnimation:animation forKey:nil];
+    
+    
+    imageViewSwitch.animationImages = @[[UIImage imageNamed:@"deviceCenter"],
+                                      [UIImage imageNamed:@"deviceForward"],
+                                      [UIImage imageNamed:@"deviceForwardSteep"],
+                                      [UIImage imageNamed:@"deviceForward"]];
+    imageViewSwitch.animationDuration = 1.5;
+    [imageViewSwitch startAnimating];
+    
+    
+    imageViewTilt.animationImages = @[[UIImage imageNamed:@"deviceCenter"],
+                                      [UIImage imageNamed:@"deviceLeft"],
+                                      [UIImage imageNamed:@"deviceCenter"],
+                                      [UIImage imageNamed:@"deviceRight"]];
+    imageViewTilt.animationDuration = 1.5;
+    [imageViewTilt startAnimating];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -75,6 +109,12 @@
     
     imageViewShake.alpha = 0.0;
     labelShake.alpha = 0.0;
+    
+    imageViewSwitch.alpha = 0.0;
+    labelSwitch.alpha = 0.0;
+    
+    imageViewTilt.alpha = 0.0;
+    labelTilt.alpha = 0.0;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -99,6 +139,16 @@
         [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
             imageViewShake.alpha = 1.0;
             labelShake.alpha = 1.0;
+        }];
+        
+        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
+            imageViewSwitch.alpha = 1.0;
+            labelSwitch.alpha = 1.0;
+        }];
+        
+        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
+            imageViewTilt.alpha = 1.0;
+            labelTilt.alpha = 1.0;
         }];
     } completion:nil];
 }

@@ -11,6 +11,8 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
+	<string>MotionCamera</string>
+	<key>CFBundleName~ipad</key>
 	<string>Motion Camera</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
