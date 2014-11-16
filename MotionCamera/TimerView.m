@@ -11,6 +11,7 @@
 
 @interface TimerView() {
     ArcLayer *arcLayer;
+    UILabel *timerLabel;
 }
 
 @end
@@ -35,8 +36,15 @@
     return self;
 }
 
+- (CGSize)intrinsicContentSize {
+    return CGSizeMake(100, 140);
+}
+
 - (void)layoutSubviews {
-    arcLayer.frame = self.bounds;
+    [super layoutSubviews];
+    
+    timerLabel.frame = CGRectMake(0, 0, 100, 40);
+    arcLayer.frame = CGRectMake(0, 40, 100, 100);
 }
 
 - (void)setup {
@@ -44,6 +52,15 @@
     arcLayer.color = [UIColor colorWithRed:236 / 255.0 green:138 / 255.0 blue:40 / 255.0 alpha:1.0];
     
     [self.layer addSublayer:arcLayer];
+    
+    timerLabel = [[UILabel alloc] init];
+    timerLabel.text = @"Timer";
+    timerLabel.textColor = [UIColor whiteColor];
+    timerLabel.textAlignment = NSTextAlignmentCenter;
+    timerLabel.shadowColor = [UIColor blackColor];
+    timerLabel.shadowOffset = CGSizeMake(1, 1);
+    timerLabel.font = [UIFont boldSystemFontOfSize:16.0];
+    [self addSubview:timerLabel];
     
     self.hidden = YES;
 }
