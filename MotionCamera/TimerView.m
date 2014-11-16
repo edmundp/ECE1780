@@ -7,104 +7,7 @@
 //
 
 #import "TimerView.h"
-
-@interface ArcLayer : CALayer
-
-@property (nonatomic) float percentage;
-@property (nonatomic) NSTimeInterval totalDuration;
-
-@end
-
-@implementation ArcLayer
-
-@dynamic percentage;
-
-- (instancetype)init
-{
-    self = [super init];
-    
-    if (self) {
-        self.contentsScale = [UIScreen mainScreen].scale;
-    }
-    
-    return self;
-}
-
-- (id)initWithLayer:(id)layer
-{
-    self = [super initWithLayer:layer];
-    if (self) {
-        if ([layer isKindOfClass:[ArcLayer class]]) {
-            self.totalDuration = ((ArcLayer *)layer).totalDuration;
-        }
-    }
-    return self;
-}
-
-+ (BOOL)needsDisplayForKey:(NSString*)key {
-    if ([key isEqualToString:@"percentage"]) {
-        return YES;
-    } else {
-        return [super needsDisplayForKey:key];
-    }
-}
-
-- (void)drawInContext:(CGContextRef)context {
-    CGContextClearRect(context, self.bounds);
-    
-    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    CGContextFillEllipseInRect(context, self.bounds);
-    
-    CGFloat radius = MIN(self.bounds.size.width, self.bounds.size.height) / 2.0;
-    
-    CGContextBeginPath(context);
-    
-    CGFloat x = CGRectGetMidX(self.bounds);
-    CGFloat y = CGRectGetMidY(self.bounds);
-    
-    CGContextMoveToPoint(context, x, y);
-    CGContextAddArc(context, x, y, radius, -M_PI_2, -M_PI_2 + self.percentage * 2 * M_PI, NO);
-
-    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:236 / 255.0 green:138 / 255.0 blue:40 / 255.0 alpha:1.0].CGColor);
-    CGContextFillPath(context);
-    
-    float thickness = 6.0;
-    
-    CGContextSetBlendMode(context, kCGBlendModeClear);
-    CGContextFillEllipseInRect(context, CGRectMake(thickness, thickness, self.bounds.size.width - 2 * thickness, self.bounds.size.height - 2 * thickness));
-    
-    CGContextSetBlendMode(context, kCGBlendModeNormal);
-    
-    //Draw the text
-    UIFont *font = [UIFont boldSystemFontOfSize:28];
-    
-    NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
-    textStyle.lineBreakMode = NSLineBreakByClipping;
-    textStyle.alignment = NSTextAlignmentCenter;
-    
-    NSShadow *shadow = [[NSShadow alloc] init];
-    shadow.shadowOffset = CGSizeMake(1, 1);
-    shadow.shadowBlurRadius = 1.0;
-    shadow.shadowColor = [UIColor blackColor];
-    
-    NSDictionary *attribs = @{
-                              NSFontAttributeName: font,
-                              NSForegroundColorAttributeName: [UIColor whiteColor],
-                              NSParagraphStyleAttributeName: textStyle,
-                              NSShadowAttributeName: shadow
-                              };
-    
-    NSString *string = [NSString stringWithFormat:@"%.1fs", self.totalDuration - self.percentage * self.totalDuration];
-    CGSize textRect = [string sizeWithAttributes:attribs];
-    
-    CGRect rect = CGRectMake(0, self.bounds.size.height / 2 - textRect.height / 2, self.bounds.size.width, textRect.height);
-    
-    UIGraphicsPushContext(context);
-    [string drawInRect:rect withAttributes:attribs];
-    UIGraphicsPopContext();
-}
-
-@end
+#import "ArcLayer.h"
 
 @interface TimerView() {
     ArcLayer *arcLayer;
@@ -138,6 +41,8 @@
 
 - (void)setup {
     arcLayer = [ArcLayer layer];
+    arcLayer.color = [UIColor colorWithRed:236 / 255.0 green:138 / 255.0 blue:40 / 255.0 alpha:1.0];
+    
     [self.layer addSublayer:arcLayer];
     
     self.hidden = YES;
@@ -146,7 +51,10 @@
 - (void)animateWithDuration:(NSTimeInterval)duration {
     self.hidden = NO;
     
-    arcLayer.totalDuration = duration;
+    arcLayer.textForPercentage = ^NSString *(float percentage) {
+        return [NSString stringWithFormat:@"%.1fs", duration - percentage * duration];
+    };
+    
     arcLayer.percentage = 1.0;
     
     CABasicAnimation *animation = [CABasicAnimation animation];

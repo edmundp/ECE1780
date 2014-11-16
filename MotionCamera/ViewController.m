@@ -14,11 +14,13 @@
 #import "TouchDownGestureRecognizer.h"
 #import "CircleLayer.h"
 #import "TimerView.h"
+#import "ZoomView.h"
 
 @interface ViewController () <MotionDetectorDelegate, UIGestureRecognizerDelegate> {
     IBOutlet UIView *messageView;
     IBOutlet UILabel *labelMessage;
     IBOutlet TimerView *timerView;
+    IBOutlet ZoomView *zoomView;
     
     CircleLayer *circleLayer;
     
@@ -294,12 +296,11 @@
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
-    
     float newZoom = MIN(MAX(camera.zoom + amount, 0.0), 1.0);
     
     camera.zoom = newZoom;
     
-    [self showMessage:[NSString stringWithFormat:@"Zoom: %d%%", (int)(newZoom * 100)] forDuration:2.0];
+    [zoomView animationToPercentage:newZoom];
 }
 
 #pragma mark - UIGestureRecognizerDelegate

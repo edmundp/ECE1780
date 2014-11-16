@@ -216,14 +216,24 @@
                                     <constraint firstAttribute="width" constant="100" id="uIz-Uz-RzF"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4jw-BI-bUQ" customClass="ZoomView">
+                                <rect key="frame" x="110" y="234" width="100" height="100"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" placeholder="YES" id="6At-kl-iWE"/>
+                                    <constraint firstAttribute="height" constant="100" placeholder="YES" id="8p2-HV-rjq"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="jLA-jy-dGu" secondAttribute="centerX" id="2t0-JG-nUh"/>
                             <constraint firstAttribute="centerY" secondItem="jLA-jy-dGu" secondAttribute="centerY" id="313-Mb-8rq"/>
+                            <constraint firstAttribute="centerX" secondItem="4jw-BI-bUQ" secondAttribute="centerX" id="4hP-A2-YnZ"/>
                             <constraint firstItem="dk4-6c-gGa" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="5" id="Yjy-CC-B27"/>
                             <constraint firstItem="dk4-6c-gGa" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="dKD-cs-F1I"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="dk4-6c-gGa" secondAttribute="trailing" constant="5" id="gNh-FF-dax"/>
+                            <constraint firstAttribute="centerY" secondItem="4jw-BI-bUQ" secondAttribute="centerY" id="hhq-ku-Blj"/>
                             <constraint firstAttribute="centerX" secondItem="dk4-6c-gGa" secondAttribute="centerX" id="wyf-nS-qVT"/>
                         </constraints>
                     </view>
@@ -231,6 +241,7 @@
                         <outlet property="labelMessage" destination="ZiI-GW-GD6" id="9Je-jv-GaB"/>
                         <outlet property="messageView" destination="dk4-6c-gGa" id="ybt-rk-jve"/>
                         <outlet property="timerView" destination="jLA-jy-dGu" id="chQ-dz-R6H"/>
+                        <outlet property="zoomView" destination="4jw-BI-bUQ" id="VJP-El-iW5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -20,6 +20,8 @@
 		8435FF1F1A1849D600DE447D /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435FF1E1A1849D600DE447D /* HelpViewController.m */; };
 		8435FF221A184A0200DE447D /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435FF211A184A0200DE447D /* RootViewController.m */; };
 		8435FF251A1867E000DE447D /* TimerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435FF241A1867E000DE447D /* TimerView.m */; };
+		8435FF281A1875A500DE447D /* ArcLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435FF271A1875A500DE447D /* ArcLayer.m */; };
+		8435FF2B1A18765E00DE447D /* ZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8435FF2A1A18765E00DE447D /* ZoomView.m */; };
 		846D7A6419FB3F1400F34305 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846D7A6319FB3F1400F34305 /* AssetsLibrary.framework */; };
 		8471E6C219ECCBB3000AA70B /* TouchDownGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8471E6C119ECCBB3000AA70B /* TouchDownGestureRecognizer.m */; };
 		8481729819EE1E110049B62D /* FixedWidthLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8481729719EE1E110049B62D /* FixedWidthLabel.m */; };
@@ -63,6 +65,10 @@
 		8435FF211A184A0200DE447D /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		8435FF231A1867E000DE447D /* TimerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerView.h; sourceTree = "<group>"; };
 		8435FF241A1867E000DE447D /* TimerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimerView.m; sourceTree = "<group>"; };
+		8435FF261A1875A500DE447D /* ArcLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArcLayer.h; sourceTree = "<group>"; };
+		8435FF271A1875A500DE447D /* ArcLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArcLayer.m; sourceTree = "<group>"; };
+		8435FF291A18765E00DE447D /* ZoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomView.h; sourceTree = "<group>"; };
+		8435FF2A1A18765E00DE447D /* ZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomView.m; sourceTree = "<group>"; };
 		846D7A6319FB3F1400F34305 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8471E6C019ECCBB3000AA70B /* TouchDownGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchDownGestureRecognizer.h; sourceTree = "<group>"; };
 		8471E6C119ECCBB3000AA70B /* TouchDownGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TouchDownGestureRecognizer.m; sourceTree = "<group>"; };
@@ -121,28 +127,11 @@
 			children = (
 				8411EFCD19E501C700679F52 /* AppDelegate.h */,
 				8411EFCE19E501C700679F52 /* AppDelegate.m */,
-				8411EFD019E501C700679F52 /* ViewController.h */,
-				8411EFD119E501C700679F52 /* ViewController.m */,
-				84A60AC219E9AAA900C4EE99 /* Camera.h */,
-				84A60AC319E9AAA900C4EE99 /* Camera.m */,
-				84A60AC819E9B0C300C4EE99 /* MotionDetector.h */,
-				84A60AC919E9B0C300C4EE99 /* MotionDetector.m */,
-				8471E6C019ECCBB3000AA70B /* TouchDownGestureRecognizer.h */,
-				8471E6C119ECCBB3000AA70B /* TouchDownGestureRecognizer.m */,
-				8481729619EE1E110049B62D /* FixedWidthLabel.h */,
-				8481729719EE1E110049B62D /* FixedWidthLabel.m */,
-				8435FF171A18341400DE447D /* CircleLayer.h */,
-				8435FF181A18341400DE447D /* CircleLayer.m */,
-				8435FF1A1A18485100DE447D /* SWRevealViewController.h */,
-				8435FF1B1A18485100DE447D /* SWRevealViewController.m */,
-				8435FF201A184A0200DE447D /* RootViewController.h */,
-				8435FF211A184A0200DE447D /* RootViewController.m */,
-				8435FF1D1A1849D600DE447D /* HelpViewController.h */,
-				8435FF1E1A1849D600DE447D /* HelpViewController.m */,
-				8435FF231A1867E000DE447D /* TimerView.h */,
-				8435FF241A1867E000DE447D /* TimerView.m */,
 				8411EFD319E501C700679F52 /* Main.storyboard */,
 				8411EFD619E501C700679F52 /* Images.xcassets */,
+				8435FF2C1A18775200DE447D /* View Controllers */,
+				8435FF2D1A18775800DE447D /* Views */,
+				8435FF2E1A18777300DE447D /* Utitilies */,
 				8411EFC919E501C700679F52 /* Supporting Files */,
 			);
 			path = MotionCamera;
@@ -183,6 +172,51 @@
 				8411EFEF19E502F700679F52 /* AVFoundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8435FF2C1A18775200DE447D /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				8411EFD019E501C700679F52 /* ViewController.h */,
+				8411EFD119E501C700679F52 /* ViewController.m */,
+				8435FF1A1A18485100DE447D /* SWRevealViewController.h */,
+				8435FF1B1A18485100DE447D /* SWRevealViewController.m */,
+				8435FF201A184A0200DE447D /* RootViewController.h */,
+				8435FF211A184A0200DE447D /* RootViewController.m */,
+				8435FF1D1A1849D600DE447D /* HelpViewController.h */,
+				8435FF1E1A1849D600DE447D /* HelpViewController.m */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		8435FF2D1A18775800DE447D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8481729619EE1E110049B62D /* FixedWidthLabel.h */,
+				8481729719EE1E110049B62D /* FixedWidthLabel.m */,
+				8435FF171A18341400DE447D /* CircleLayer.h */,
+				8435FF181A18341400DE447D /* CircleLayer.m */,
+				8435FF261A1875A500DE447D /* ArcLayer.h */,
+				8435FF271A1875A500DE447D /* ArcLayer.m */,
+				8435FF291A18765E00DE447D /* ZoomView.h */,
+				8435FF2A1A18765E00DE447D /* ZoomView.m */,
+				8435FF231A1867E000DE447D /* TimerView.h */,
+				8435FF241A1867E000DE447D /* TimerView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		8435FF2E1A18777300DE447D /* Utitilies */ = {
+			isa = PBXGroup;
+			children = (
+				84A60AC219E9AAA900C4EE99 /* Camera.h */,
+				84A60AC319E9AAA900C4EE99 /* Camera.m */,
+				84A60AC819E9B0C300C4EE99 /* MotionDetector.h */,
+				84A60AC919E9B0C300C4EE99 /* MotionDetector.m */,
+				8471E6C019ECCBB3000AA70B /* TouchDownGestureRecognizer.h */,
+				8471E6C119ECCBB3000AA70B /* TouchDownGestureRecognizer.m */,
+			);
+			name = Utitilies;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -286,12 +320,14 @@
 			files = (
 				84A60ACA19E9B0C300C4EE99 /* MotionDetector.m in Sources */,
 				8481729819EE1E110049B62D /* FixedWidthLabel.m in Sources */,
+				8435FF281A1875A500DE447D /* ArcLayer.m in Sources */,
 				84A60AC419E9AAA900C4EE99 /* Camera.m in Sources */,
 				8411EFD219E501C700679F52 /* ViewController.m in Sources */,
 				8411EFCF19E501C700679F52 /* AppDelegate.m in Sources */,
 				8435FF1F1A1849D600DE447D /* HelpViewController.m in Sources */,
 				8435FF251A1867E000DE447D /* TimerView.m in Sources */,
 				8435FF1C1A18485100DE447D /* SWRevealViewController.m in Sources */,
+				8435FF2B1A18765E00DE447D /* ZoomView.m in Sources */,
 				8435FF221A184A0200DE447D /* RootViewController.m in Sources */,
 				8411EFCC19E501C700679F52 /* main.m in Sources */,
 				8471E6C219ECCBB3000AA70B /* TouchDownGestureRecognizer.m in Sources */,
