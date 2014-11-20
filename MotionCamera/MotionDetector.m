@@ -24,8 +24,10 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 @implementation MotionDetector
 @synthesize tiltPerformed;
 @synthesize photoCaptured;
+@synthesize performingState;
 @synthesize shakeCount;
 @synthesize shakeDirectionX;
+@synthesize initShakeDirectionX;
 @synthesize shakeDirectionZ;
 @synthesize lastShake;
 @synthesize tiltInitialCheckForwardBackward;
@@ -42,6 +44,7 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 
 - (void)setup {
     motionManager = [[CMMotionManager alloc] init];
+    performingState=false;
     
     // Setup accelerometer
     motionManager.accelerometerUpdateInterval = kAccelerometerUpdateInterval;
@@ -86,7 +89,7 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                 if (!(tiltInitialCheckForwardBackward) && (tiltForwardBackward< 30) && (tiltForwardBackward>-30))
                     tiltInitialCheckForwardBackward=YES;
                     
-                if (!(tiltInitialCheckLeftwardRightward) && (tiltLeftwardRightward< 30 && tiltLeftwardRightward>-30))
+                if (!(tiltInitialCheckLeftwardRightward) && (tiltLeftwardRightward< 10 && tiltLeftwardRightward>-10))
                         tiltInitialCheckLeftwardRightward=YES;
                 if((shakeCount==0) && !(tiltPerformed) && tiltInitialCheckForwardBackward && (tiltForwardBackward> 70 || tiltForwardBackward<-70)){
                     [self.delegate motionDetectorUserPerformedVerticalTilt];
@@ -94,10 +97,9 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                    // [self stopMotionSensing];
                 }
                 
-                if((shakeCount==0 && fabs(accx)<0.1) && !(tiltPerformed) && tiltInitialCheckLeftwardRightward && (tiltLeftwardRightward> 30 || tiltLeftwardRightward<-30)){
-                    [self.delegate motionDetectorUserPerformedHorizontalTilt];
+                if((shakeCount==0 && fabs(accx)<0.1) && !(tiltPerformed) && tiltInitialCheckLeftwardRightward && (tiltLeftwardRightward> 20 || tiltLeftwardRightward<-20)){
+                    [self.delegate motionDetectorUserIsPerformingHorizontalRotate:tiltLeftwardRightward/5000];
                     [[NSOperationQueue mainQueue]  cancelAllOperations];
-                    //[self stopMotionSensing];
                 }
                 
                     }];
@@ -105,24 +107,24 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 
         if([motionManager isGyroActive] == NO)
         {
-            [motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
-                                            withHandler:^(CMGyroData *gyroData, NSError *error)
-             {
-                 float x = gyroData.rotationRate.x;
-                 //NSLog(@"X: %f", x);
-                 float y = gyroData.rotationRate.y;
-                 //NSLog(@"Y: %f", y);
-                 float z = gyroData.rotationRate.z;
-                 //NSLog(@"Z: %f", z);
-                 if((x>=0.5) && abs(y)< 0.1 && abs(z)<0.1){
-                     [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/20];
-                     //[motionManager stopGyroUpdates];
-                 }
-                 if((x<=-0.5) && abs(y)< 0.1 && abs(z)<0.1){
-                     [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/20];
-                     //[motionManager stopGyroUpdates];
-                 }
-             }];
+//            [motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
+//                                            withHandler:^(CMGyroData *gyroData, NSError *error)
+//             {
+//                 float x = gyroData.rotationRate.x;
+//                 //NSLog(@"X: %f", x);
+//                 float y = gyroData.rotationRate.y;
+//                 //NSLog(@"Y: %f", y);
+//                 float z = gyroData.rotationRate.z;
+//                 //NSLog(@"Z: %f", z);
+//                 if((x>=0.5) && abs(y)< 0.1 && abs(z)<0.1){
+//                     [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/20];
+//                     //[motionManager stopGyroUpdates];
+//                 }
+//                 if((x<=-0.5) && abs(y)< 0.1 && abs(z)<0.1){
+//                     [self.delegate motionDetectorUserIsPerformingHorizontalRotate:x/20];
+//                     //[motionManager stopGyroUpdates];
+//                 }
+//             }];
         }
         
     }
@@ -171,10 +173,9 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                       //   [self stopMotionSensing];
                      }
                      
-                     if((shakeCount==0 && fabs(accx)<0.1) && !(tiltPerformed) && tiltInitialCheckLeftwardRightward && (tiltLeftwardRightward> 30 || tiltLeftwardRightward<-30)){
-                         [self.delegate motionDetectorUserPerformedHorizontalTilt];
+                     if((shakeCount==0 && fabs(accx)<0.1) && !(tiltPerformed) && tiltInitialCheckLeftwardRightward && (tiltLeftwardRightward> 20 || tiltLeftwardRightward<-20)){
+                         [self.delegate motionDetectorUserIsPerformingHorizontalRotate:tiltLeftwardRightward/5000];
                          [[NSOperationQueue mainQueue]  cancelAllOperations];
-                        // [self stopMotionSensing];
                      }
                      
                  }];
@@ -182,24 +183,24 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
             
             if([motionManager isGyroActive] == NO)
             {
-                [motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
-                                           withHandler:^(CMGyroData *gyroData, NSError *error)
-                 {
-                     float x = gyroData.rotationRate.x;
-                     //NSLog(@"X: %f", x);
-                     float y = gyroData.rotationRate.y;
-                     //NSLog(@"Y: %f", y);
-                     float z = gyroData.rotationRate.z;
-                     //NSLog(@"Z: %f", z);
-                     if((y>=0.5) && abs(x)< 0.1 && abs(z)<0.1){
-                         [self.delegate motionDetectorUserIsPerformingHorizontalRotate:y/20];
-                         //[motionManager stopGyroUpdates];
-                     }
-                     if((y<=-0.5) && abs(x)< 0.1 && abs(z)<0.1){
-                         [self.delegate motionDetectorUserIsPerformingHorizontalRotate:y/20];
-                         //[motionManager stopGyroUpdates];
-                     }
-                 }];
+//                [motionManager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
+//                                           withHandler:^(CMGyroData *gyroData, NSError *error)
+//                 {
+//                     float x = gyroData.rotationRate.x;
+//                     NSLog(@"X: %f", x);
+//                     float y = gyroData.rotationRate.y;
+//                     NSLog(@"Y: %f", y);
+//                     float z = gyroData.rotationRate.z;
+//                     NSLog(@"Z: %f", z);
+//                     if((z>=0.5) && abs(x)< 0.1 && abs(y)<0.1){
+//                         [self.delegate motionDetectorUserIsPerformingHorizontalRotate:z/20];
+//                         //[motionManager stopGyroUpdates];
+//                     }
+//                     if((z<=-0.5) && abs(x)< 0.1 && abs(y)<0.1){
+//                         [self.delegate motionDetectorUserIsPerformingHorizontalRotate:z/20];
+//                         //[motionManager stopGyroUpdates];
+//                     }
+//                 }];
             }
         }
                 else
@@ -228,11 +229,10 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                                    withHandler:^(CMAccelerometerData *data, NSError *error)
          {
              NSTimeInterval elapsed=[lastShake timeIntervalSinceNow];
-//             if (!(photoCaptured) && shakeCount==0 && fabs(data.acceleration.z) >1 && shakeDirectionZ * data.acceleration.z <0)
-//                 {
-//                     shakeDirectionZ=data.acceleration.z;
-//                     [self.delegate motionDetectorUserPerformedPush];
-//             }
+             if (!(photoCaptured) && shakeCount==0 && fabs(data.acceleration.z)>2)
+                 {
+                     [self.delegate motionDetectorUserPerformedPush];
+             }
              if (!(photoCaptured) && fabs(elapsed)>0.75 && shakeCount>0)
              {
                  NSInteger tmp=shakeCount;
@@ -242,15 +242,24 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                  
              }
             // NSLog(@"shakes= %d, elapsed=%f", shakeCount, elapsed);
-        NSLog(@"X: %f,Y: %f,Z: %f", data.acceleration.x, data.acceleration.y,data.acceleration.z);
-             if(fabs(data.acceleration.x) >1.5 && shakeDirectionX * data.acceleration.x <0)
+      //  NSLog(@"X: %f,Y: %f,Z: %f", data.acceleration.x, data.acceleration.y,data.acceleration.z);
+             if(fabs(data.acceleration.x) >2 && shakeCount==0)
+             {
+                 initShakeDirectionX=data.acceleration.x;
+                 shakeDirectionX=data.acceleration.x;
+                 shakeCount++;
+             }
+             else if(fabs(data.acceleration.x) >1.5 && shakeCount>0)
+             {
+                if (shakeDirectionX * data.acceleration.x <0)
                  {
                      lastShake=[NSDate date];
                      shakeDirectionX=data.acceleration.x;
-                     if (data.acceleration.x>0)
+                     if (data.acceleration.x*initShakeDirectionX>0)
                          shakeCount++;
                      
                  }
+             }
             
             //[self.delegate motionDetectorUserPerformedShake:data.acceleration.x:data.acceleration.y:data.acceleration.z];
         

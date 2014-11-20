@@ -29,6 +29,7 @@
     
     BOOL isVideo;
     BOOL isRecording;
+    BOOL busyState;
     
     AVCaptureVideoPreviewLayer *previewLayer;
     Camera *camera;
@@ -154,6 +155,7 @@
         [self animatePhotoCapture];
         
     } afterDelay:0.0];
+    busyState=false;
 }
 
 - (void)animatePhotoCapture {
@@ -192,42 +194,24 @@
 #pragma mark - MotionDetectorDelegate
 
 - (void)motionDetectorUserPerformedPush{
-    if (isRecording)
-    {
-        [self showMessage:@"Recording finished" forDuration:1];
-        //[camera stopVideoRecording];
-        isRecording=NO;
+    if (busyState)
         return;
-    }
-    if (isVideo)
-    {
-        isRecording=YES;
-        //[camera startVideoRecording];
-        labelMessage.text=@"Recording...";
-        messageView.alpha=1;
-        return;
-    }
-    [self showMessage:@"Cheese!" forDuration:1];
+    busyState=true;
+    [self showMessage:@"Cheese!" forDuration:2];
     motionDetector.photoCaptured = YES;
     [camera capturePhotoWithCompletionHandler:^{
         
         [self animatePhotoCapture];
-        
-    } afterDelay:1];
+    busyState=false;        
+    } afterDelay:2];
+
 }
 
 - (void)motionDetectorUserPerformedShake: (int)shakeCount{
-    if (isRecording)
+    if (busyState)
         return;
+    busyState=true;
     
-    if (isVideo)
-    {
-        captureTimeRemaining=shakeCount*5;
-        isRecording=YES;
-        //[camera startVideoRecording];
-        //captureTimer=[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimeCounter) userInfo:nil repeats:YES];
-        return;
-    }
     
     if (captureTimeRemaining>0)
     {
@@ -249,8 +233,9 @@
 }
 
 - (void)motionDetectorUserPerformedVerticalTilt {
-    if (isRecording)
+    if (busyState)
         return;
+    busyState=true;
     [camera flipCamera];
     motionDetector.tiltPerformed = YES;
    // [motionDetector stopMotionSensing];
@@ -258,11 +243,12 @@
     
     NSString *type = camera.cameraPosition == AVCaptureDevicePositionBack ? @"back" : @"front";
     NSString *message = [NSString stringWithFormat:@"Switched to %@ camera", type];
-    
+    busyState=false;
     [self showMessage:message forDuration:2.0];
 }
 
 - (void)motionDetectorUserPerformedHorizontalTilt {
+    return;
     if (isRecording || captureTimeRemaining>0)
         return;
     motionDetector.tiltPerformed = YES;
@@ -276,11 +262,15 @@
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
+    if (busyState)
+        return;
+    busyState=true;
     float newZoom = MIN(MAX(camera.zoom + amount, 0.0), 1.0);
     
     camera.zoom = newZoom;
     
     [zoomView animationToPercentage:newZoom];
+    busyState=false;
 }
 
 #pragma mark - UIGestureRecognizerDelegate

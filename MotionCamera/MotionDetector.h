@@ -22,10 +22,12 @@
 @property (nonatomic, weak) id <MotionDetectorDelegate> delegate;
 @property BOOL tiltPerformed;
 @property BOOL photoCaptured;
+@property BOOL performingState;
 
 @property NSInteger shakeCount;
 @property NSDate* lastShake;
 @property float shakeDirectionX;
+@property float initShakeDirectionX;
 @property float shakeDirectionZ;
 @property BOOL tiltInitialCheckForwardBackward;
 @property BOOL tiltInitialCheckLeftwardRightward;

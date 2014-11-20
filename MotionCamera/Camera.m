@@ -178,6 +178,7 @@
     _orientation = orientation;
     
     AVCaptureConnection *connection = nil;
+    return;
     
     connection = [_stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
     assert([connection isVideoOrientationSupported]);
