@@ -87,12 +87,12 @@
     [imageViewSwitch startAnimating];
     
     
-    imageViewTilt.animationImages = @[[UIImage imageNamed:@"deviceCenter"],
-                                      [UIImage imageNamed:@"deviceLeft"],
-                                      [UIImage imageNamed:@"deviceCenter"],
-                                      [UIImage imageNamed:@"deviceRight"]];
-    imageViewTilt.animationDuration = 1.5;
-    [imageViewTilt startAnimating];
+//    imageViewTilt.animationImages = @[[UIImage imageNamed:@"deviceCenter"],
+//                                      [UIImage imageNamed:@"deviceLeft"],
+//                                      [UIImage imageNamed:@"deviceCenter"],
+//                                      [UIImage imageNamed:@"deviceRight"]];
+//    imageViewTilt.animationDuration = 1.5;
+//    [imageViewTilt startAnimating];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -146,10 +146,10 @@
             labelSwitch.alpha = 1.0;
         }];
         
-        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
-            imageViewTilt.alpha = 1.0;
-            labelTilt.alpha = 1.0;
-        }];
+//        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
+//            imageViewTilt.alpha = 1.0;
+//            labelTilt.alpha = 1.0;
+//        }];
     } completion:nil];
 }
 
