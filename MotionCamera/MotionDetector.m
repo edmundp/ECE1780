@@ -233,7 +233,7 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                  {
                      [self.delegate motionDetectorUserPerformedPush];
              }
-             if (!(photoCaptured) && fabs(elapsed)>0.75 && shakeCount>0)
+             if (!(photoCaptured) && fabs(elapsed)>1.0 && shakeCount>0)
              {
                  NSInteger tmp=shakeCount;
                  shakeCount=0;
@@ -248,8 +248,9 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
                  initShakeDirectionX=data.acceleration.x;
                  shakeDirectionX=data.acceleration.x;
                  shakeCount++;
+                 lastShake=[NSDate date];
              }
-             else if(fabs(data.acceleration.x) >1.5 && shakeCount>0)
+             else if(fabs(data.acceleration.x) >1.5 && shakeCount>0 && fabs(elapsed)>0.2)
              {
                 if (shakeDirectionX * data.acceleration.x <0)
                  {

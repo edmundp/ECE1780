@@ -126,7 +126,7 @@
     previewLayer.frame = self.view.layer.bounds;
     previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.view.layer insertSublayer:previewLayer atIndex:0];
-
+    
     messageView.layer.cornerRadius = 10.0;
     messageView.alpha = 0.0;
 }
@@ -202,9 +202,10 @@
     [camera capturePhotoWithCompletionHandler:^{
         
         [self animatePhotoCapture];
-    busyState=false;        
+        busyState=false;
     } afterDelay:2];
-
+    
+    [timerView animateWithDuration:2.0];
 }
 
 - (void)motionDetectorUserPerformedShake: (int)shakeCount{
@@ -219,14 +220,14 @@
         return;
     }
     
-    captureTimeRemaining=(shakeCount-1)*3;
+    captureTimeRemaining = 1 + (shakeCount - 1) * 4;
     if (captureTimeRemaining==0)
         captureTimeRemaining++;
     
-
+    
     [self showMessage:[NSString stringWithFormat: @"%d shakes detected!", shakeCount] forDuration:1];
     
-
+    
     captureTimer = [NSTimer scheduledTimerWithTimeInterval:captureTimeRemaining target:self selector:@selector(timerCountdownFinished) userInfo:nil repeats:NO];
     
     [timerView animateWithDuration:captureTimeRemaining];
@@ -238,7 +239,7 @@
     busyState=true;
     [camera flipCamera];
     motionDetector.tiltPerformed = YES;
-   // [motionDetector stopMotionSensing];
+    // [motionDetector stopMotionSensing];
     
     
     NSString *type = camera.cameraPosition == AVCaptureDevicePositionBack ? @"back" : @"front";
@@ -252,13 +253,13 @@
     if (isRecording || captureTimeRemaining>0)
         return;
     motionDetector.tiltPerformed = YES;
-  //  [motionDetector stopMotionSensing];
+    //  [motionDetector stopMotionSensing];
     isVideo=!isVideo;
     NSString *captureMode = isVideo ? @"Video recording mode" : @"Photo capturing mode";
-
+    
     [self showMessage: captureMode forDuration:2.0];
     
-
+    
 }
 
 - (void)motionDetectorUserIsPerformingHorizontalRotate:(float)amount {
