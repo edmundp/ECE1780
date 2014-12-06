@@ -11,6 +11,7 @@
 @implementation ArcLayer
 
 @dynamic percentage;
+@dynamic color;
 
 - (instancetype)init
 {
@@ -37,6 +38,8 @@
 
 + (BOOL)needsDisplayForKey:(NSString*)key {
     if ([key isEqualToString:@"percentage"]) {
+        return YES;
+    } else if ([key isEqualToString:@"color"]) {
         return YES;
     } else {
         return [super needsDisplayForKey:key];

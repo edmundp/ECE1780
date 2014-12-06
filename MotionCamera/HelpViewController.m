@@ -98,59 +98,54 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    circleOneView.alpha = 0.0;
-    labelOne.alpha = 0.0;
-    
-    circleTwoView.alpha = 0.0;
-    labelTwo.alpha = 0.0;
-    
-    imageViewZoom.alpha = 0.0;
-    labelZoom.alpha = 0.0;
-    
-    imageViewShake.alpha = 0.0;
-    labelShake.alpha = 0.0;
-    
-    imageViewSwitch.alpha = 0.0;
-    labelSwitch.alpha = 0.0;
-    
-    imageViewTilt.alpha = 0.0;
-    labelTilt.alpha = 0.0;
+//    circleOneView.alpha = 0.0;
+//    labelOne.alpha = 0.0;
+//    
+//    circleTwoView.alpha = 0.0;
+//    labelTwo.alpha = 0.0;
+//    
+//    imageViewZoom.alpha = 0.0;
+//    labelZoom.alpha = 0.0;
+//    
+//    imageViewShake.alpha = 0.0;
+//    labelShake.alpha = 0.0;
+//    
+//    imageViewSwitch.alpha = 0.0;
+//    labelSwitch.alpha = 0.0;
+//    
+//    imageViewTilt.alpha = 0.0;
+//    labelTilt.alpha = 0.0;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [UIView animateKeyframesWithDuration:2.0 delay:0.3 options:0 animations:^{
-        [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:0.2 animations:^{
-            circleOneView.alpha = 1.0;
-            labelOne.alpha = 1.0;
-        }];
-        
-        [UIView addKeyframeWithRelativeStartTime:0.3 relativeDuration:0.2 animations:^{
-            circleTwoView.alpha = 1.0;
-            labelTwo.alpha = 1.0;
-        }];
-        
-        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
-            imageViewZoom.alpha = 1.0;
-            labelZoom.alpha = 1.0;
-        }];
-        
-        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
-            imageViewShake.alpha = 1.0;
-            labelShake.alpha = 1.0;
-        }];
-        
-        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
-            imageViewSwitch.alpha = 1.0;
-            labelSwitch.alpha = 1.0;
-        }];
-        
-//        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
-//            imageViewTilt.alpha = 1.0;
-//            labelTilt.alpha = 1.0;
+//    [UIView animateKeyframesWithDuration:2.0 delay:0.3 options:0 animations:^{
+//        [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:0.2 animations:^{
+//            circleOneView.alpha = 1.0;
+//            labelOne.alpha = 1.0;
 //        }];
-    } completion:nil];
+//        
+//        [UIView addKeyframeWithRelativeStartTime:0.3 relativeDuration:0.2 animations:^{
+//            circleTwoView.alpha = 1.0;
+//            labelTwo.alpha = 1.0;
+//        }];
+//        
+//        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
+//            imageViewZoom.alpha = 1.0;
+//            labelZoom.alpha = 1.0;
+//        }];
+//        
+//        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
+//            imageViewShake.alpha = 1.0;
+//            labelShake.alpha = 1.0;
+//        }];
+//        
+//        [UIView addKeyframeWithRelativeStartTime:0.7 relativeDuration:0.4 animations:^{
+//            imageViewSwitch.alpha = 1.0;
+//            labelSwitch.alpha = 1.0;
+//        }];
+//    } completion:nil];
 }
 
 - (void)didReceiveMemoryWarning {

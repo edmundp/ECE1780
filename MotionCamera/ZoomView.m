@@ -74,6 +74,7 @@
     };
     
     arcLayer.percentage = percentage;
+    [arcLayer setNeedsDisplay];
     
     [hideTimer invalidate];
     hideTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timerDone) userInfo:nil repeats:NO];

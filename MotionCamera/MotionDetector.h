@@ -31,6 +31,9 @@
 @property float shakeDirectionZ;
 @property BOOL tiltInitialCheckForwardBackward;
 @property BOOL tiltInitialCheckLeftwardRightward;
+
+@property (nonatomic) BOOL isMotionSensing;
+
 /**
  Start monitoring for motion gestures
  */

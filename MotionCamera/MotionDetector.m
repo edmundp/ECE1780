@@ -59,6 +59,8 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 }
 
 - (void)beginMotionSensing {
+    self.isMotionSensing = YES;
+    
     tiltPerformed = NO;
     photoCaptured = NO;
     shakeCount=0;
@@ -273,6 +275,8 @@ static NSTimeInterval const kGyroscopeUpdateInterval = 0.05;
 }
 
 - (void)stopMotionSensing {
+    self.isMotionSensing = NO;
+    
     [motionManager stopGyroUpdates];
     [motionManager stopDeviceMotionUpdates];
     //[motionManager stopAccelerometerUpdates];

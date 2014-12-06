@@ -38,6 +38,9 @@
     UITapGestureRecognizer *tapGestureRecognizer;
     UILongPressGestureRecognizer *longPressGestureRecognizer;
     TouchDownGestureRecognizer *touchDownGestureRecognizer;
+    
+    NSInteger shakeCount;
+    NSTimer *shakeTimer;
 }
 
 @end
@@ -59,9 +62,17 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    [self becomeFirstResponder];
+    
 #if !TARGET_IPHONE_SIMULATOR
     [camera startCamera];
 #endif
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    [self resignFirstResponder];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -104,6 +115,8 @@
 - (void)setupMotionGestures {
     motionDetector = [[MotionDetector alloc] init];
     motionDetector.delegate = self;
+    
+    [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
 }
 
 - (void)setupTouchGestures {
@@ -146,6 +159,7 @@
 }
 
 - (void)timerCountdownFinished {
+    captureTimer = nil;
     captureTimeRemaining = 0.0;
     
     [self showMessage:@"Cheese!" forDuration:1];
@@ -191,9 +205,22 @@
     [circleLayer fadeOutAndRemove];
 }
 
+- (void)shakeTimerEnded {
+    captureTimeRemaining = 1 + (shakeCount - 1) * 4;
+    
+    captureTimer = [NSTimer scheduledTimerWithTimeInterval:captureTimeRemaining target:self selector:@selector(timerCountdownFinished) userInfo:nil repeats:NO];
+    
+    [timerView animateWithDuration:captureTimeRemaining];
+    
+    shakeTimer = nil;
+    shakeCount = 0;
+}
+
 #pragma mark - MotionDetectorDelegate
 
 - (void)motionDetectorUserPerformedPush{
+    return;
+    
     if (busyState)
         return;
     busyState=true;
@@ -209,6 +236,8 @@
 }
 
 - (void)motionDetectorUserPerformedShake: (int)shakeCount{
+    return;
+    
     if (busyState)
         return;
     busyState=true;
@@ -266,12 +295,51 @@
     if (busyState)
         return;
     busyState=true;
-    float newZoom = MIN(MAX(camera.zoom + amount, 0.0), 1.0);
+    float newZoom = MIN(MAX(camera.zoom + 0.3 * amount, 0.0), 1.0);
+    //newZoom = MIN(MAX(100 * (amount - 0.004), 0.0), 1.0);
     
     camera.zoom = newZoom;
     
     [zoomView animationToPercentage:newZoom];
     busyState=false;
+}
+
+#pragma mark - UIResponder
+
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
+
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+    if (motion == UIEventSubtypeMotionShake )
+    {
+        [shakeTimer invalidate];
+        shakeTimer = nil;
+        
+        if (motionDetector.isMotionSensing) {
+            return;
+        }
+        
+        if (captureTimer) {
+            return;
+        }
+        
+        shakeCount++;
+        
+        NSString *message = nil;
+        
+        if (shakeCount == 1) {
+            message = [NSString stringWithFormat:@"%d shake", shakeCount];
+        }
+        else {
+            message = [NSString stringWithFormat:@"%d shakes", shakeCount];
+        }
+        
+        [self showMessage:message forDuration:0.5];
+        
+        shakeTimer = [NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(shakeTimerEnded) userInfo:nil repeats:NO];
+    }
 }
 
 #pragma mark - UIGestureRecognizerDelegate
